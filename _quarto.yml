@@ -4,7 +4,7 @@ project:
 book:
   title: "Bioinformatics Protocols"
   author: "Viriya Keo"
-  date: "7/24/2023"
+  date: "06/20/2024"
   chapters:
     - index.qmd
     - pipelines.qmd
