@@ -1,0 +1,32 @@
+{
+  "index.qmd": {
+    "index.html": "a8e518ed"
+  },
+  "intro.qmd": {
+    "intro.html": "a4c79f0b"
+  },
+  "summary.qmd": {
+    "summary.html": "d429d420"
+  },
+  "references.qmd": {
+    "references.html": "480e588f"
+  },
+  "pipelines.qmd": {
+    "pipelines.html": "6cb90168"
+  },
+  "resources.qmd": {
+    "resources.html": "b73c4d3c"
+  },
+  "bulk.qmd": {
+    "bulk.html": "7a334c63"
+  },
+  "functional.qmd": {
+    "functional.html": "599d01af"
+  },
+  "3D.qmd": {
+    "3D.html": "7025cfa3"
+  },
+  "single-cell.qmd": {
+    "single-cell.html": "893d485f"
+  }
+}

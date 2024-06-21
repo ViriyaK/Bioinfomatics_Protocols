@@ -1,0 +1,55 @@
+---
+format:
+  html:
+    link-external-newwindow: true
+---
+
+# Books and Resources
+
+Here is a list of more comprehensive resources (i.e. not a one off blog or tutorial). I've tried to include free resources here.
+
+::: callout-tip
+The most useful resource you have is Google. Get good at googling errors. Get good at finding vignettes and tutorials. Get good at documenting the solutions and new knowledge that you find.
+:::
+
+## Bioinformatics
+
+The single most useful book in my bioinformatics career up to date is [Bioinformatics Data Skills](https://vincebuffalo.com/book/) @Buffalo_2015.
+
+I have not read [Computational Genomics with R](https://compgenomr.github.io/book/index.html) yet, but it looks extremely useful and actually might be a better summary of @sec-Bulk_Analysis
+
+The Babraham Institute has a very comprehensive [training materials](https://www.bioinformatics.babraham.ac.uk/training.html)\
+[Single-Cell Best Practices](https://www.sc-best-practices.org/preamble.html) from the Theis Lab.
+
+[Epigenomics Workshop](https://nbis-workshop-epigenomics.readthedocs.io/en/latest/index.html) by National Bioinformatics Infrastructure Sweden.
+
+<https://bioinformaticsworkbook.org/list.html#gsc.tab=0>\
+<https://docs.gdc.cancer.gov/Data/Introduction/>
+
+## Programming
+
+### R
+
+The best introduction book to R is unambigously <https://r4ds.hadley.nz/>. "The R Graph Gallery boasts the most extensive compilation of R-generated graphs on the web" <https://r-graph-gallery.com/index.html>
+
+### Python
+
+<https://wesmckinney.com/book/> https://www.rebeccabarter.com/blog/2023-09-11-from_r_to_python
+
+## Git
+
+<https://happygitwithr.com/> is a comprehensive resource on how to use Git with R.
+
+If you want to understand how git works more intuitively, watch [this](https://www.youtube.com/watch?v=2sjqTHE0zok).
+
+## Statistics
+
+StatQuest is a very accessible resource to those without a math background. I would recommend the [Statistics Fundamentals](https://www.youtube.com/watch?v=qBigTkBLU6g&list=PLblh5JKOoLUK0FLuzwntyYI10UQFUhsY9&pp=iAQB) and [High Troughput Sequencing](https://www.youtube.com/watch?v=tlf6wYJrwKY&list=PLblh5JKOoLUJo2Q6xK4tZElbIvAACEykp&pp=iAQB) playlists.
+
+I haven't read [Modern Statistics for Modern Biology](https://web.stanford.edu/class/bios221/book/) yet but it looks to be very relevant.
+
+## Miscellanous
+
+[The Missing Semester](https://missing.csail.mit.edu/2020/) of Your CS Education shows you how to master the command line and vim.\
+[Adobe Illustrator for Scientific Figures](https://docs.google.com/document/d/1TXmbltzBPcApCcuJ9HLOIQgWPqKylrFRWRudrN-5vBE/edit) from the Raj Lab.
+[IGV handbook]<https://www.igv.org/workshops/BroadApril2017/IGV_SlideDeck.pdf>.

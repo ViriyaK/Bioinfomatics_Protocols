@@ -1,0 +1,342 @@
+---
+execute:
+  eval: false
+format:
+  html:
+    link-external-newwindow: true
+---
+
+# Bulk Analysis {#sec-Bulk_Analysis}
+
+This chapter is for the downstream analysis of the most common bulk NGS experiments we perform. For functional analysis that are common to all these methods, see next chapter.
+
+## RNA-Seq
+
+While RPKM has some issues and is not the most correct quantification, for basic comparison, this is good enough to share with biologists. The nf-core pipeline will provide this value by default.
+
+### Differential Gene Expression
+
+One of the most basic and common analysis on RNA-Seq. We use DESeq2 and their well documented [vignette](https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html) is worth reading from start to end for the beginner.
+
+::: callout-note
+While our pipeline originally used the `STAR --quantMode` to quantify genes, with switching to nf-core, we are also switching to [STAR](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) alignment followed by [RSEM](https://github.com/deweylab/RSEM) quantification.
+:::
+
+```{r}
+library(tidyverse)
+
+files <- list.files(path = "./working_dir", pattern = "*genes.results$", full.names = TRUE)
+rsem_results <- lapply(files, read_delim)
+expected_counts_list <- lapply(rsem_results, function(x) { x$expected_count })
+expected_counts <- do.call(cbind, expected_counts_list) %>% as.data.frame()
+```
+
+RSEM produces non-integer counts, and we can by-pass that by using `round()`. Alternatively, you can use [tximport](https://bioconductor.org/packages/devel/bioc/vignettes/tximport/inst/doc/tximport.html) to read the files in.
+
+```{r}
+expected_counts <- round(expected_counts) 
+rownames(expected_counts) <- rsem_results[[1]]$gene_id
+colnames(expected_counts) <- stringr::str_extract(files, "mr\\d+") # our RNA-seq samples usually start with MR
+
+sampleTable <- data.frame(condition = factor(rep(c("control", "knockdown"), each = 3)),
+                          replicate = factor(rep(seq(1,3))))
+rownames(sampleTable) <- colnames(expected_counts)
+```
+
+**DESeq2**
+
+```{r}
+dds <- DESeqDataSetFromMatrix(expected_counts, sampleTable, design = ~condition)
+keep <- rowSums(counts(dds)) > 10
+dds <- dds[keep,]
+dds <- DESeq(dds)
+res <- results(dds, alpha = 0.01)
+summary(res)
+```
+
+Difference between rlog, vst and lfcShrink <https://support.bioconductor.org/p/104615/>.
+
+**Plotting PCs**
+
+DESeq2's `plotPCA()` function will plot the top 500 most variable genes. The chunk below will plot all genes.
+
+```{r}
+degenes <- res %>% subset(padj < 0.01)
+dds_rlog <- rlog(dds)
+pca_data <- t(assay(dds_rlog)) %>% prcomp()
+autoplot(pca_data, data = sampleTable, colour = "condition") + 
+  geom_text_repel(label = rownames(sampleTable))
+rlog_de <- assay(dds_rlog) %>% subset(rownames(dds_rlog) %in% rownames(degenes))
+rlog_de_scaled <- t(scale(t(rlog_de)))
+```
+
+After getting DEGs, you'd want to group the genes into biological functions. See @sec-enrichment for Over representation analysis (ORA) with GO and KEGG terms as well as Gene Set Enrichment Analysis (GSEA) with ranked genes.
+
+### Deciding Groups and Plotting
+
+While you can use k-means manually to get seperate groups, [ComplexHeatmap](https://jokergoo.github.io/ComplexHeatmap-reference/book/index.html) allows you to do so with more [flexiblity](https://jokergoo.github.io/ComplexHeatmap-reference/book/a-single-heatmap.html#heatmap-split) and get visualizations as well.
+
+```{r}
+mat_colors <- list(
+  replicate = c(brewer.pal(3, "Accent")),
+  condition = c(brewer.pal(6, "Set1")))
+names(mat_colors$replicate) <- unique(sampleTable$replicate)
+names(mat_colors$condition) <- sampleTable$condition
+
+col_anno <- HeatmapAnnotation(df = sampleTable,
+                              which = 'col',
+                              col = mat_colors
+)
+
+hmap <- Heatmap(rlog_de_scaled,
+                   name = "scaled",
+                   
+                   # Row Params
+                   show_row_names = FALSE,
+                   row_title_rot=0,
+                   cluster_row_slices = FALSE,
+                   border = TRUE,
+                   row_km = 2, # split rows into 2 groups
+                   
+                   # Column Params
+                   cluster_columns = FALSE,
+                   column_title = "Rlog Transformed Expression for all DE genes",
+                   top_annotation = col_anno)
+hmap <- draw(hmap) # assigning so that k-means is only called once
+row_order(hmap) # grab the different groups in rows
+```
+
+See [here](https://jokergoo.github.io/ComplexHeatmap-reference/book/a-single-heatmap.html#get-orders-and-dendrograms-from-heatmap) for why we assign `draw()`.
+
+## ChIP-Seq and ATAC-Seq
+
+### Spike-in normalization
+[Guidelines](https://www.activemotif.com/documents/1977.pdf) on spike-in normalization from ActiveMotif.
+
+1. Perform ChIP combining the Spike-in Chromatin, Spike-in Antibody, test chromatin and test antibody into the same tube for immunoprecipitation. We suggest using the guidelines provided for chromatin and antibody quantities based on the antibody target.
+2. Follow ChIP with Next-Generation Sequencing.
+3. Map ChIP-seq data to the test reference genome (e.g. human, mouse or other).
+4. Map ChIP-seq data to the Drosophila reference genome.
+5. Count uniquely aligning Drosophila sequence tags and identify the sample containing the least number of tags.
+6. Compare Drosophila tag counts from other samples to the sample containing the least tags and generate a normalization factor for
+each comparison.
+ (Sample 1 with lowest tag count / Sample 2) = Normalization factor
+7. Downsample the tag counts of data sets proportional to the normalization factor determined
+
+### Peak calling
+
+Depending on if you use the nfcore's pipeline or your own, you will have to call peaks. I use MACS2 and here are some details I've gathered.\
+<https://github.com/crazyhottommy/ChIP-seq-analysis/blob/master/part1.3_MACS2_peak_calling_details.md>
+
+Why I skip model building <https://github.com/macs3-project/MACS/issues/391>
+
+```{bash}
+macs2 callpeak -t mxx_sorted.bam --outdir macs/mxx -n mxx -g hs -q 0.01 --nomodel --shift 0 --extsize 250
+```
+
+### Overlapping peaks
+
+After MACS2 peak-calling, we may want to see how many peaks overlap in different conditions. Even though it's named [mergePeaks](http://homer.ucsd.edu/homer/ngs/mergePeaks.html), you will be able to get overlapping statistics from this. Be mindful of long path names as mergePeaks will produce errors.
+
+```{bash}
+mergePeaks -d 100 pu1.peaks cebp.peaks -prefix mmm -venn venn.txt
+```
+
+::: callout-tip
+The -d flag changes the unique peaks to 100 bp each and keep the shared peaks same size.\
+To get literal 1bp overlap, just omit -d argument altogether
+:::
+
+The easiest way to plot this result is with [Vennerable](https://github.com/js229/Vennerable).
+
+```{r}
+a <- tot[1]
+b <- tot[2]
+ab <- tot[3]
+
+venn_obj <- createVennObj(nSets = 2, sNames = c("m1043", "m1044"), # names in order of first to last
+                     sSizes = c(0, a, b ,ab))
+vp <- plotVenn(nVennObj = venn_obj)
+```
+
+This gets tedious with more than 2 sets. See code below. You should not make Venn Diagrams with more than 4 sets. An upset plot is better in that scenario.
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+# 3 sets -----
+a <- tot[1]
+b <- tot[2]
+ab <- tot[3]
+c <- tot[4]
+ac <- tot[5]
+bc <- tot[6]
+abc <- tot[7]
+
+# 4 sets -------
+a <- tot[1]
+b <- tot[2]
+ab <- tot[3]Ve
+c <- tot[4]
+ac <- tot[5]
+bc <- tot[6]
+abc <- tot[7]
+d <- tot[8]
+ad <- tot[9]
+bd <- tot[10]
+abd <- tot[11]
+cd <- tot[12]
+acd <- tot[13]
+bcd <- tot[14]
+abcd <- tot[15]
+```
+
+This is a more automated way of reading in the data, here using 4 sets as an example.
+
+```{r}
+venn <- read.table("results/output_nepc.bedpe", header = TRUE, sep = "\t")
+venn$alpha <- apply(venn, 1, function(x) {
+  sets <- c("A", "B", "C", "D")
+  selected_sets <- sets[which(x == "X")]
+  paste(selected_sets, collapse = "")
+})
+
+order_vector <- c("0", "A", "B", "AB", "C", "AC", "BC", "ABC", "D", "AD", "BD", "ABD", "CD", "ACD", "BCD", "ABCD")
+
+venn$alpha <- factor(venn$alpha, levels = order_vector)
+
+# Sort the data frame based on the factor levels
+venn <- venn[order(venn$alpha), ]
+venn_plot <- Venn(SetNames = c("93", "145.1", "145.2", "nci"), 
+                  Weight = c(0, venn$Features))
+plot(venn_plot, type = "ellipses")
+```
+
+Creating upset plots <https://github.com/hms-dbmi/UpSetR>
+
+```{r}
+library(UpSetR)
+venn$Sets <- apply(venn[, -1], 1, function(x) {
+  sets <- colnames(venn)[2:17]
+  selected_sets <- sets[which(x == "X")]
+  paste(selected_sets, collapse = "&")
+})
+
+upset_input <- c(venn$Features)
+names(upset_input) <- venn$Sets
+upset(fromExpression(upset_input), nsets = 16, nintersects = 100, number.angles = 45)
+```
+
+A sample script to automate this process. I haven't incorporated the above part into this script.
+
+```{bash filename="mergePeaksandplot.sh"}
+#| eval: false
+module load homer/4.10
+module load R/4.0.3
+mergePeaks control_peaks.narrowPeak purturbed_peaks.narrowPeak -prefix ov -venn venn.txt
+# n_way script, venn.txt, last sample label, middle samples label, first sample label, txt file name (no extension)
+Rscript --vanilla venn2way.R venn.txt purturbed control venn
+```
+
+The accompanying R file:
+
+```{r filename="venn2way.R"}
+#| eval: false
+
+library(Vennerable)
+
+args <- commandArgs(trailingOnly = TRUE)
+
+venn <- read.table(args[1], header = TRUE, sep = "\t")
+tot <- venn[[Total]]
+
+a <- tot[1]
+b <- tot[2]
+ab <- tot[3]
+
+venner <- Venn(SetNames = c(args[3], args[2]), # opposite labelling to nVennR, going from last sample to first
+               Weight = c(0, b, a, ab))
+png(paste0(args[4], ".png"))
+plot(venner)
+dev.off()
+```
+
+To make Venn Diagrams that are more accurately weighted, use [nVennR](https://cran.r-project.org/web/packages/nVennR/index.html). Sadly, it looks like it's been removed from CRAN since the last time I've installed it.
+
+If you have replicates, overlapping peaks can be obtained via packages like [MAnorm2](https://cran.r-project.org/web/packages/MAnorm2/index.html). Read more about dealing with replicates [here](https://ro-che.info/articles/2018-07-11-chip-seq-consensus).
+
+### Motif Enrichment
+
+Homer `mergePeaks` is able to take the narrowPeaks format as input, but if you're doing homer `mergePeaks` first and then `findMotifs`, you need to change the Homer `mergePeaks` output to exclude the header line first. This also applies to deepTools heatmaps.
+
+```{bash}
+findMotifsGenome.pl peak_or_bed /projects/p20023/Viriya/software/Homer4.10/data/genomes/hg38/ output_dir -size 200 
+```
+
+-size 200 is the default, and is calculated from the center of the peaks. If your peaks are bigger and you wish to use the entire region, use `-size given`. However, when the regions are too large, motifs will not be significantly enriched.
+
+### Plotting Heatmaps
+
+Here I'm showing a sample [deepTools](https://deeptools.readthedocs.io/en/latest/) script to plot heatmaps. First you need bigwig files. `bamCoverage` offers normalization by scaling factor, Reads Per Kilobase per Million mapped reads (RPKM), counts per million (CPM), bins per million mapped reads (BPM) and 1x depth (reads per genome coverage, RPGC).
+
+```{bash}
+bamCoverage --bam m${i}_sorted.bam --outFileName m${i}.bw --normalizeUsing CPM \
+--extendReads 200 --numberOfProcessors 6 --binSize 20
+```
+
+I find having paths defined at the top of the script makes it less likely to have mistakes.
+
+```{bash}
+day3="m1015_1055_hg38/foxa2/CPM"
+nci="m1015_1055_hg38/CPM"
+chip="../Viriya/analysis/foxa2/chip-seq"
+
+computeMatrix reference-point --referencePoint center -S \
+$day3/m674.bw $day3/m676.bw $tf/m914.bw $tf/m921.bw $nci/m1043.bw $nci/m1044.bw \
+-R $chip/clustering/output/1.bed \
+$chip/clustering/output/2.bed \
+$chip/clustering/output/3.bed \
+$chip/clustering/output/4.bed \
+-a 3000 -b 3000 -o $chip/heatmaps/scaled_FOXA2_sites.npz \
+--samplesLabel m674 m676 m914 m921 m1043 m1044 \
+-p max --blackListFileName $chip/ENCFF356LFX.bed.gz
+
+plotHeatmap -m $chip/FOXA2_6_samples/heatmaps/scaled_FOXA2_sites.npz \
+-o $chip/FOXA2_6_samples/heatmaps/scaled_FOXA2_sites.pdf \
+--colorMap Blues
+
+```
+
+`--sortUsingSamples` is not 0 indexed. 1st sample is 1. `--sortUsingSamples` is also usable in plotHeatmap so we can save that to there for more flexible plotting.
+
+`--regionsLabel`: "xxx binding sites n=2390" put it in quotes if you don't want to key in escape too many times
+
+`--sampleLabels`: if you're sure you're not going to change any labels, put it in makeheatmap step because fewer things to type when redoing the heatmap multiple times due to scaling etc, therefore fewer mistakes. otherwise put it in plotHeatmap.
+
+In legends: "Pol II" spaces and parantheses need to be escaped, but not + signs.
+
+Use BED6 format annd not the BED3 if you care about strandedness <https://github.com/deeptools/deepTools/issues/886>.
+
+To get sorted output bed files, use the `--sortedOutRegions` at the plotHeatmap step, not computeMatrix.\
+Use `--clusterUsingSamples` for a more robust delineation.
+
+### Genomic Annotation
+
+[ChIPSeeker](https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html)
+
+```{r}
+library(org.Hs.eg.db)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+
+promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
+
+mxxx <- readPeakFile("/path_to_narrowPeak/mxxx_peaks.narrowPeak")
+tagMatrix <- getTagMatrix(mxxx, windows = promoter) # usually needs an interactive job
+peakAnno <- annotatePeak(mxxx, tssRegion = c(-3000,3000), TxDb = txdb, annoDb = "org.Hs.eg.db")
+plotAnnoPie(peakAnno, main = "mxxx", line = -6)
+vennpie(peakAnno, r = 0.1)
+upsetplot(peakAnno) + ggtitle("mxxx")
+plotAnnoBar(peakAnno)
+```
+
+`annotatePeak` will default to chosing one gene per region. This is fine for small binding sites but for larger regions use `seq2gene` as it will map genomic regions in a many-to-many manner.

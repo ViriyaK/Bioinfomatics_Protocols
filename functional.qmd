@@ -1,0 +1,92 @@
+---
+execute:
+  eval: false
+format:
+  html:
+    link-external-newwindow: true
+---
+
+# Functional Analysis
+
+What do do once you have a list of genes?
+
+## Gene name conversions
+
+Getting genomic coordinates from a list of gene names.
+
+```{r}
+ensembl <- useEnsembl(biomart = "ensembl", dataset="hsapiens_gene_ensembl", version = 86)
+chr <- c(seq(1,22), "X", "Y")
+
+gene_coor <- getBM(attributes = c("hgnc_symbol", "chromosome_name", "start_position", "end_position"), 
+                    filters = "hgnc_symbol", values = rownames(res_sh_vs_ctrl), mart = ensembl,
+                    useCache = FALSE)
+# patched chromosomes are coming up, therefore not unique, need to filter out
+gene_coor <- gene_coor[gene_coor$chromosome_name %in% chr,]
+```
+
+There are many ways of doing this, they're all slightly different depending on the database.
+
+## Enrichment Analysis {#sec-enrichment}
+
+Many of the functional analysis is achieved using [ClusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html). While the [vignette](https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html) is very comprehensive, it can be overwhelming to see which functions are useful, so I will point out the most useful ones here.
+
+### Overrepresention Analysis (ORA)
+
+A very good [explanation](https://twitter.com/mdziemann/status/1626407797939384320) and accompanying [paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009935) of why we need background lists. Which genes to use for backgrounds? Check [this](https://www.biostars.org/p/9514932/#9515107).
+
+```{r}
+genes <- as.data.frame(peakAnno)$geneId # get the genes from peak annotation
+
+geneUniverse <- rownames(res_lrt) # all genes that were tested for significance
+go <- enrichGO (gene = genes,
+          keyType = "SYMBOL",
+          universe = geneUniverse,
+          ont = "BP",
+          OrgDb = org.Hs.eg.db,
+          qvalueCutoff = 0.05)
+
+
+go_simplified <- simplify(go) # to get rid of redundant GO terms
+```
+
+To wrap long labels into a few lines
+
+```{r}
+dotplot(go) + scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) + ggtitle("")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+To use KEGG, you need to convert gene symbols to entrezid or use the geneId column from annotatePeaks.
+
+```{r}
+deg_list_entrez <- lapply(deg_list, function(x) {
+  mapIds(org.Hs.eg.db, rownames(x), "ENTREZID", "SYMBOL")
+})
+kegg <- enrichKEGG(gene = deg_list_entrez$up, organism = "hsa")
+```
+
+Or use bit_kegg <https://guangchuangyu.github.io/2016/05/convert-biological-id-with-kegg-api-using-clusterprofiler/>. I have not tried this method yet.
+
+### Gene Set Enrichment Analysis (GSEA)
+
+Explanation of GSEA and how to do it in R <https://sbc.shef.ac.uk/workshops/2019-01-14-rna-seq-r/rna-seq-gene-set-testing.nb.html>.\
+How I first did it <https://stephenturner.github.io/deseq-to-fgsea/>.
+
+I rank the genes by the stat column. For the Wald test, stat is the Wald statistic: the log2FoldChange divided by lfcSE.
+
+```{r}
+ranked_genes <- degenes %>% as.data.frame() %>% rownames_to_column("symbol") %>% dplyr::select(symbol, stat)
+ranked_genes <- ranked_genes %>% arrange(-stat) %>% deframe()
+```
+
+We usually perform GSEA with the Molecular Signature Database and there is a package for easy retrieval.
+
+```{r}
+library(msigdbr)
+h <- msigdbr(species = "Homo sapiens", category = "H") %>% 
+  dplyr::select(gs_name, gene_symbol)
+gsea <- GSEA(ranked_genes, TERM2GENE = h)
+ridgeplot(gsea)
+enrichplot::gseaplot2(gsea, geneSetID = "HALLMARK_")
+```

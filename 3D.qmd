@@ -1,0 +1,153 @@
+---
+execute:
+  eval: false
+format:
+  html:
+    link-external-newwindow: true
+---
+
+# 3D Chromatin Organization
+
+Hi-C is a method to capture chromatin contacts genome-wide. Read through the resources for more background. Micro-C is very similar except it does not use a restriction enzyme, leading to better capture. Most analysis are the same for both and I will point out where they differ.
+
+## Resources
+
+[Comparative study on chomatin loop callers](https://www.biorxiv.org/content/10.1101/2023.11.24.567971v1)
+
+## Processing
+
+We have processed all our samples with [runHiC](https://github.com/XiaoTaoWang/HiC_pipeline) from Feng Yue's lab as that was my committee member and expert on HiC. Many people use HiC-Pro but I have tested it and it is much slower. The one time I tried nf-core's [HiC pipeline](https://nf-co.re/hic/2.1.0) for Micro-C, it failed.
+
+Each sample will require it's own folder, with this structure.
+
+| sample
+|         data
+|                 hg38
+|                 HiC-gzip
+|         workspace
+|                 datasets.tsv
+
+All fastq files will be in HiC-gzip, with \_R1.fastq.gz and \_R2.fastq.gz changed to \_1.fastq.gz and \_2.fastq.gz. I haven't found a workaround to avoid the renaming. The datasets.tsv, technical replicates and biological doesn't really matter but if you want the end file to combine everything, add rep1, rep2 per pair of fastq files so the final resulting file will be denoted allReps. Do `runHiC quality` to get a sense of how well the experiment worked after shallow sequencing.
+
+## Downstream analysis
+
+Many of these have many tools available to call them. I have attempted to choose the most well-supported tools in the same ecosystem to avoid unnecessary format changes and hidden mistakes. I ended up with the Open2C ecosystem's [cooltools](https://cooltools.readthedocs.io/en/latest/) and many of Dr. Feng Yue's lab's tools.
+
+### A/B Compartments
+
+I'm following the cooltools [compartments tutorial](https://cooltools.readthedocs.io/en/latest/notebooks/compartments_and_saddles.html).\
+Compartments are not comparable between cell types if done using PCA. You can use [cscore](https://github.com/scoutzxb/CscoreTool) if a more robust definition is needed. However, the PCA definition is currently still widely used. For this, you need too calculate expected values first and you should output those as a tsv because you'll need it for other analysis.
+
+```{bash}
+lucap_35cr_cis_eigs = cooltools.eigs_cis(
+                        lucap_35cr,
+                        gc_cov,
+                        n_eigs=3,
+                        )
+lucap_35cr_eigenvector_track = lucap_35cr_cis_eigs[1][['chrom','start','end','E1']]
+```
+
+### Topological Associating Domain
+
+There are many TAD calling tools and most of them do not have a great degree of overlap. I chose the insulation score methods in [cooltools](https://cooltools.readthedocs.io/en/latest/notebooks/insulation_and_boundaries.html).
+
+Creating TADs from insulation scores <https://github.com/open2c/cooltools/issues/453>.
+
+```{bash}
+windows = [3*resolution, 5*resolution, 10*resolution, 25*resolution]
+samples = {"LuCaP70CR" : lucap70cr_insulation_table, 
+           "LuCaP77CR" : lucap77cr_insulation_table,
+          "LuCaP1451" : lucap1451_insulation_table}
+for window in windows:
+    for table_name, table in samples.items():
+        print("sample", table_name, "at", window)
+        insul = table[["chrom", "start", "end", f"log2_insulation_score_{window}"]]
+        insul.to_csv(f"results_{window}/{table_name}_insulation_scores_{window}.bed", header=False, index=False, sep="\t")
+        
+        tads = bioframe.merge(table[table[f"is_boundary_{window}"] == False])
+        tads = tads[(tads["end"] - tads["start"]) <= 1500000].reset_index(drop=True) # dropping large tads
+        tads.to_csv(f"results_{window}/{table_name}_TADs_{window}.bed", header=False, index=False, sep="\t")
+
+```
+
+### Loops
+
+#### Mustache
+
+Use mustache for loop calls of individual samples, and diffMustache for pair-wise comparisons. The default d for diffMustache is 2,000,000bp. Call at various cut-offs with `-pt2` and decide on a reasonable number of loops.
+
+#### Working with loops
+
+homer [merge2Dbed.pl](http://homer.ucsd.edu/homer/interactions2/HiCTADsAndLoops.html) will combine seperate loop calls (also TADs if specified in parameter) that are at adjacent pixels (or within distance specified) into a big loop. This will also produce condition specific loops that are just based on coordinates, not statistical difference.
+
+Currently, I'm using [LoopRig](https://cran.r-project.org/web/packages/LoopRig/index.html) as the underlying data structure for working with bedpe files. It's really just 2 Granges objects linked together and I've re-written many of their functions. It's most likely unnecessary to use this package.
+
+### APA
+
+There are also many implementations of APA calculation. I use [coolpup.py](https://github.com/open2c/coolpuppy), an extension of `cooltools pileup`.
+
+## HiGlass
+
+You either start with a local installation of Docker, or use the online browser at resgen. They have some slight differences.\
+For HiGlass, you need to ingest most files in a two-step manner, whereas with resgen you can directly upload them (with the exception of TADs). It's better to write scripts to facilitate and automate the ingestion.\
+The files will not line up perfect with the heat maps due to how HiGlass interprets coordinates. See <https://github.com/higlass/higlass/issues/1051>. Since HiGlass doesn't have a notion of a genomic assembly, you need to ingest a chromosome size file once when you start.
+
+### Docker
+
+Install docker following these [instructions](https://github.com/higlass/higlass-docker).\
+To view HiGlass on docker locally, start the docker app, run `higlass-manage start` on your terminal. Go to <http://localhost:8989/app> to see the browser. Deletion of ingested tracks needs access to the superuser via <http://localhost:8989/admin/>. Once data is ingested, it's kept at a different location and you can usually delete the original files in your local computer to save space.
+
+### Resgen
+
+You can create separate projects. Files uploaded needs to be manually tagged. Most important are `assembly:hg38`, `datatype`, and `filetype`. To use gene search, both chromosome info and gene annotations need to be added to the panel using the search bar.
+
+### Navigating HiGlass
+
+You need to be able to reproduce each view so you won't have to start from scatch each time. In Docker, you save the View Configs files manually. In resgen, you can save a view.
+
+While the GUI is sufficient, some things are faster and easier changed via the view configs.\
+To change 1D scales, <https://github.com/higlass/higlass/issues/946>.
+
+### Ingesting files specifications
+
+Instructions can be found [here](https://docs.higlass.io/) but it's sparse and somewhat confusing so I'm including common use cases.
+
+After aggregation (whether that's needed depends on the filetype), ingest files like this with appropriate tags.
+
+```{bash}
+higlass-manage ingest file --filetype bed2ddb --datatype 2d-rectangle-domains --project-name $3 --assembly hg38
+```
+
+#### mcool
+
+The .mcool files themselves are easily recognized with just `higlass-manage ingest sample.mcool --assembly hg38`.
+
+#### AB compartments
+
+These files need to be converted into bigwigs first. They are more well supported than bedgraph files. Use UCSC's bedGraphtoBigWig.
+
+#### TADs
+
+For resgen, TADs need to be aggregated first, and the aggregated file is uploaded.
+
+```{bash}
+j=${1%%.*}
+
+clodius aggregate bedpe \
+    --assembly hg38 \
+	--chr1-col 1 --chr2-col 1 \
+	--from1-col 2 --to1-col 3 \
+	--from2-col 2 --to2-col 3 \
+    --output-file ${j}.beddb \
+    $1
+```
+
+Specify `track-type:linear-2d-rectangle-domains` and `filetype:bed2ddb` for top section. For viewing in center section `datatype:2d-rectangle-domains`.
+
+#### Loops
+
+Loops view as arcs currently only works on resgen and not the local docker. Loops on the 2D heatmap will work with docker.
+
+### ChIP-Seq and ATAC-Seq tracks
+
+These are just bigwig ingestion.

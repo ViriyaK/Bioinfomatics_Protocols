@@ -1,0 +1,29 @@
+project:
+  type: book
+
+book:
+  title: "Bioinformatics Protocols"
+  author: "Viriya Keo"
+  date: "7/24/2023"
+  chapters:
+    - index.qmd
+    - pipelines.qmd
+    - bulk.qmd
+    - functional.qmd
+    - 3D.qmd
+    - single-cell.qmd
+    - resources.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    code-copy: true
+    code-tools: true
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+

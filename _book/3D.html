@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bioinformatics Protocols - 4&nbsp; 3D Chromatin Organization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./single-cell.html" rel="next">
+<link href="./functional.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./3D.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">3D Chromatin Organization</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Bioinformatics Protocols</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pipelines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Glueing Together Pipelines</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bulk.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Bulk Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functional.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Functional Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3D.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">3D Chromatin Organization</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./single-cell.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Single-Cell Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./resources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Books and Resources</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources"><span class="header-section-number">4.1</span> Resources</a></li>
+  <li><a href="#processing" id="toc-processing" class="nav-link" data-scroll-target="#processing"><span class="header-section-number">4.2</span> Processing</a></li>
+  <li><a href="#downstream-analysis" id="toc-downstream-analysis" class="nav-link" data-scroll-target="#downstream-analysis"><span class="header-section-number">4.3</span> Downstream analysis</a>
+  <ul class="collapse">
+  <li><a href="#ab-compartments" id="toc-ab-compartments" class="nav-link" data-scroll-target="#ab-compartments"><span class="header-section-number">4.3.1</span> A/B Compartments</a></li>
+  <li><a href="#topological-associating-domain" id="toc-topological-associating-domain" class="nav-link" data-scroll-target="#topological-associating-domain"><span class="header-section-number">4.3.2</span> Topological Associating Domain</a></li>
+  <li><a href="#loops" id="toc-loops" class="nav-link" data-scroll-target="#loops"><span class="header-section-number">4.3.3</span> Loops</a></li>
+  <li><a href="#apa" id="toc-apa" class="nav-link" data-scroll-target="#apa"><span class="header-section-number">4.3.4</span> APA</a></li>
+  </ul></li>
+  <li><a href="#higlass" id="toc-higlass" class="nav-link" data-scroll-target="#higlass"><span class="header-section-number">4.4</span> HiGlass</a>
+  <ul class="collapse">
+  <li><a href="#docker" id="toc-docker" class="nav-link" data-scroll-target="#docker"><span class="header-section-number">4.4.1</span> Docker</a></li>
+  <li><a href="#resgen" id="toc-resgen" class="nav-link" data-scroll-target="#resgen"><span class="header-section-number">4.4.2</span> Resgen</a></li>
+  <li><a href="#navigating-higlass" id="toc-navigating-higlass" class="nav-link" data-scroll-target="#navigating-higlass"><span class="header-section-number">4.4.3</span> Navigating HiGlass</a></li>
+  <li><a href="#ingesting-files-specifications" id="toc-ingesting-files-specifications" class="nav-link" data-scroll-target="#ingesting-files-specifications"><span class="header-section-number">4.4.4</span> Ingesting files specifications</a></li>
+  <li><a href="#chip-seq-and-atac-seq-tracks" id="toc-chip-seq-and-atac-seq-tracks" class="nav-link" data-scroll-target="#chip-seq-and-atac-seq-tracks"><span class="header-section-number">4.4.5</span> ChIP-Seq and ATAC-Seq tracks</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">3D Chromatin Organization</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Hi-C is a method to capture chromatin contacts genome-wide. Read through the resources for more background. Micro-C is very similar except it does not use a restriction enzyme, leading to better capture. Most analysis are the same for both and I will point out where they differ.</p>
+<section id="resources" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="resources"><span class="header-section-number">4.1</span> Resources</h2>
+<p><a href="https://www.biorxiv.org/content/10.1101/2023.11.24.567971v1">Comparative study on chomatin loop callers</a></p>
+</section>
+<section id="processing" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="processing"><span class="header-section-number">4.2</span> Processing</h2>
+<p>We have processed all our samples with <a href="https://github.com/XiaoTaoWang/HiC_pipeline">runHiC</a> from Feng Yue’s lab as that was my committee member and expert on HiC. Many people use HiC-Pro but I have tested it and it is much slower. The one time I tried nf-core’s <a href="https://nf-co.re/hic/2.1.0">HiC pipeline</a> for Micro-C, it failed.</p>
+<p>Each sample will require it’s own folder, with this structure.</p>
+<p>sample<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hg38<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HiC-gzip<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;workspace<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datasets.tsv</p>
+<p>All fastq files will be in HiC-gzip, with _R1.fastq.gz and _R2.fastq.gz changed to _1.fastq.gz and _2.fastq.gz. I haven’t found a workaround to avoid the renaming. The datasets.tsv, technical replicates and biological doesn’t really matter but if you want the end file to combine everything, add rep1, rep2 per pair of fastq files so the final resulting file will be denoted allReps. Do <code>runHiC quality</code> to get a sense of how well the experiment worked after shallow sequencing.</p>
+</section>
+<section id="downstream-analysis" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="downstream-analysis"><span class="header-section-number">4.3</span> Downstream analysis</h2>
+<p>Many of these have many tools available to call them. I have attempted to choose the most well-supported tools in the same ecosystem to avoid unnecessary format changes and hidden mistakes. I ended up with the Open2C ecosystem’s <a href="https://cooltools.readthedocs.io/en/latest/">cooltools</a> and many of Dr.&nbsp;Feng Yue’s lab’s tools.</p>
+<section id="ab-compartments" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="ab-compartments"><span class="header-section-number">4.3.1</span> A/B Compartments</h3>
+<p>I’m following the cooltools <a href="https://cooltools.readthedocs.io/en/latest/notebooks/compartments_and_saddles.html">compartments tutorial</a>.<br>
+Compartments are not comparable between cell types if done using PCA. You can use <a href="https://github.com/scoutzxb/CscoreTool">cscore</a> if a more robust definition is needed. However, the PCA definition is currently still widely used. For this, you need too calculate expected values first and you should output those as a tsv because you’ll need it for other analysis.</p>
+<pre class="{bash}"><code>lucap_35cr_cis_eigs = cooltools.eigs_cis(
+                        lucap_35cr,
+                        gc_cov,
+                        n_eigs=3,
+                        )
+lucap_35cr_eigenvector_track = lucap_35cr_cis_eigs[1][['chrom','start','end','E1']]</code></pre>
+</section>
+<section id="topological-associating-domain" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="topological-associating-domain"><span class="header-section-number">4.3.2</span> Topological Associating Domain</h3>
+<p>There are many TAD calling tools and most of them do not have a great degree of overlap. I chose the insulation score methods in <a href="https://cooltools.readthedocs.io/en/latest/notebooks/insulation_and_boundaries.html">cooltools</a>.</p>
+<p>Creating TADs from insulation scores <a href="https://github.com/open2c/cooltools/issues/453" class="uri">https://github.com/open2c/cooltools/issues/453</a>.</p>
+<pre class="{bash}"><code>windows = [3*resolution, 5*resolution, 10*resolution, 25*resolution]
+samples = {"LuCaP70CR" : lucap70cr_insulation_table, 
+           "LuCaP77CR" : lucap77cr_insulation_table,
+          "LuCaP1451" : lucap1451_insulation_table}
+for window in windows:
+    for table_name, table in samples.items():
+        print("sample", table_name, "at", window)
+        insul = table[["chrom", "start", "end", f"log2_insulation_score_{window}"]]
+        insul.to_csv(f"results_{window}/{table_name}_insulation_scores_{window}.bed", header=False, index=False, sep="\t")
+        
+        tads = bioframe.merge(table[table[f"is_boundary_{window}"] == False])
+        tads = tads[(tads["end"] - tads["start"]) &lt;= 1500000].reset_index(drop=True) # dropping large tads
+        tads.to_csv(f"results_{window}/{table_name}_TADs_{window}.bed", header=False, index=False, sep="\t")
+</code></pre>
+</section>
+<section id="loops" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="loops"><span class="header-section-number">4.3.3</span> Loops</h3>
+<section id="mustache" class="level4" data-number="4.3.3.1">
+<h4 data-number="4.3.3.1" class="anchored" data-anchor-id="mustache"><span class="header-section-number">4.3.3.1</span> Mustache</h4>
+<p>Use mustache for loop calls of individual samples, and diffMustache for pair-wise comparisons. The default d for diffMustache is 2,000,000bp. Call at various cut-offs with <code>-pt2</code> and decide on a reasonable number of loops.</p>
+</section>
+<section id="working-with-loops" class="level4" data-number="4.3.3.2">
+<h4 data-number="4.3.3.2" class="anchored" data-anchor-id="working-with-loops"><span class="header-section-number">4.3.3.2</span> Working with loops</h4>
+<p>homer <a href="http://homer.ucsd.edu/homer/interactions2/HiCTADsAndLoops.html">merge2Dbed.pl</a> will combine seperate loop calls (also TADs if specified in parameter) that are at adjacent pixels (or within distance specified) into a big loop. This will also produce condition specific loops that are just based on coordinates, not statistical difference.</p>
+<p>Currently, I’m using <a href="https://cran.r-project.org/web/packages/LoopRig/index.html">LoopRig</a> as the underlying data structure for working with bedpe files. It’s really just 2 Granges objects linked together and I’ve re-written many of their functions. It’s most likely unnecessary to use this package.</p>
+</section>
+</section>
+<section id="apa" class="level3" data-number="4.3.4">
+<h3 data-number="4.3.4" class="anchored" data-anchor-id="apa"><span class="header-section-number">4.3.4</span> APA</h3>
+<p>There are also many implementations of APA calculation. I use <a href="https://github.com/open2c/coolpuppy">coolpup.py</a>, an extension of <code>cooltools pileup</code>.</p>
+</section>
+</section>
+<section id="higlass" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="higlass"><span class="header-section-number">4.4</span> HiGlass</h2>
+<p>You either start with a local installation of Docker, or use the online browser at resgen. They have some slight differences.<br>
+For HiGlass, you need to ingest most files in a two-step manner, whereas with resgen you can directly upload them (with the exception of TADs). It’s better to write scripts to facilitate and automate the ingestion.<br>
+The files will not line up perfect with the heat maps due to how HiGlass interprets coordinates. See <a href="https://github.com/higlass/higlass/issues/1051" class="uri">https://github.com/higlass/higlass/issues/1051</a>. Since HiGlass doesn’t have a notion of a genomic assembly, you need to ingest a chromosome size file once when you start.</p>
+<section id="docker" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="docker"><span class="header-section-number">4.4.1</span> Docker</h3>
+<p>Install docker following these <a href="https://github.com/higlass/higlass-docker">instructions</a>.<br>
+To view HiGlass on docker locally, start the docker app, run <code>higlass-manage start</code> on your terminal. Go to <a href="http://localhost:8989/app" class="uri">http://localhost:8989/app</a> to see the browser. Deletion of ingested tracks needs access to the superuser via <a href="http://localhost:8989/admin/" class="uri">http://localhost:8989/admin/</a>. Once data is ingested, it’s kept at a different location and you can usually delete the original files in your local computer to save space.</p>
+</section>
+<section id="resgen" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="resgen"><span class="header-section-number">4.4.2</span> Resgen</h3>
+<p>You can create separate projects. Files uploaded needs to be manually tagged. Most important are <code>assembly:hg38</code>, <code>datatype</code>, and <code>filetype</code>. To use gene search, both chromosome info and gene annotations need to be added to the panel using the search bar.</p>
+</section>
+<section id="navigating-higlass" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="navigating-higlass"><span class="header-section-number">4.4.3</span> Navigating HiGlass</h3>
+<p>You need to be able to reproduce each view so you won’t have to start from scatch each time. In Docker, you save the View Configs files manually. In resgen, you can save a view.</p>
+<p>While the GUI is sufficient, some things are faster and easier changed via the view configs.<br>
+To change 1D scales, <a href="https://github.com/higlass/higlass/issues/946" class="uri">https://github.com/higlass/higlass/issues/946</a>.</p>
+</section>
+<section id="ingesting-files-specifications" class="level3" data-number="4.4.4">
+<h3 data-number="4.4.4" class="anchored" data-anchor-id="ingesting-files-specifications"><span class="header-section-number">4.4.4</span> Ingesting files specifications</h3>
+<p>Instructions can be found <a href="https://docs.higlass.io/">here</a> but it’s sparse and somewhat confusing so I’m including common use cases.</p>
+<p>After aggregation (whether that’s needed depends on the filetype), ingest files like this with appropriate tags.</p>
+<pre class="{bash}"><code>higlass-manage ingest file --filetype bed2ddb --datatype 2d-rectangle-domains --project-name $3 --assembly hg38</code></pre>
+<section id="mcool" class="level4" data-number="4.4.4.1">
+<h4 data-number="4.4.4.1" class="anchored" data-anchor-id="mcool"><span class="header-section-number">4.4.4.1</span> mcool</h4>
+<p>The .mcool files themselves are easily recognized with just <code>higlass-manage ingest sample.mcool --assembly hg38</code>.</p>
+</section>
+<section id="ab-compartments-1" class="level4" data-number="4.4.4.2">
+<h4 data-number="4.4.4.2" class="anchored" data-anchor-id="ab-compartments-1"><span class="header-section-number">4.4.4.2</span> AB compartments</h4>
+<p>These files need to be converted into bigwigs first. They are more well supported than bedgraph files. Use UCSC’s bedGraphtoBigWig.</p>
+</section>
+<section id="tads" class="level4" data-number="4.4.4.3">
+<h4 data-number="4.4.4.3" class="anchored" data-anchor-id="tads"><span class="header-section-number">4.4.4.3</span> TADs</h4>
+<p>For resgen, TADs need to be aggregated first, and the aggregated file is uploaded.</p>
+<pre class="{bash}"><code>j=${1%%.*}
+
+clodius aggregate bedpe \
+    --assembly hg38 \
+    --chr1-col 1 --chr2-col 1 \
+    --from1-col 2 --to1-col 3 \
+    --from2-col 2 --to2-col 3 \
+    --output-file ${j}.beddb \
+    $1</code></pre>
+<p>Specify <code>track-type:linear-2d-rectangle-domains</code> and <code>filetype:bed2ddb</code> for top section. For viewing in center section <code>datatype:2d-rectangle-domains</code>.</p>
+</section>
+<section id="loops-1" class="level4" data-number="4.4.4.4">
+<h4 data-number="4.4.4.4" class="anchored" data-anchor-id="loops-1"><span class="header-section-number">4.4.4.4</span> Loops</h4>
+<p>Loops view as arcs currently only works on resgen and not the local docker. Loops on the 2D heatmap will work with docker.</p>
+</section>
+</section>
+<section id="chip-seq-and-atac-seq-tracks" class="level3" data-number="4.4.5">
+<h3 data-number="4.4.5" class="anchored" data-anchor-id="chip-seq-and-atac-seq-tracks"><span class="header-section-number">4.4.5</span> ChIP-Seq and ATAC-Seq tracks</h3>
+<p>These are just bigwig ingestion.</p>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./functional.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Functional Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./single-cell.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Single-Cell Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">  eval: false</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">    link-external-newwindow: true</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3D Chromatin Organization</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>Hi-C is a method to capture chromatin contacts genome-wide. Read through the resources for more background. Micro-C is very similar except it does not use a restriction enzyme, leading to better capture. Most analysis are the same for both and I will point out where they differ.</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resources</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Comparative study on chomatin loop callers</span><span class="co">](https://www.biorxiv.org/content/10.1101/2023.11.24.567971v1)</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Processing</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>We have processed all our samples with <span class="co">[</span><span class="ot">runHiC</span><span class="co">](https://github.com/XiaoTaoWang/HiC_pipeline)</span> from Feng Yue's lab as that was my committee member and expert on HiC. Many people use HiC-Pro but I have tested it and it is much slower. The one time I tried nf-core's <span class="co">[</span><span class="ot">HiC pipeline</span><span class="co">](https://nf-co.re/hic/2.1.0)</span> for Micro-C, it failed.</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>Each sample will require it's own folder, with this structure.</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>| sample</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>|         data</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>|                 hg38</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>|                 HiC-gzip</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>|         workspace</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>|                 datasets.tsv</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>All fastq files will be in HiC-gzip, with <span class="sc">\_</span>R1.fastq.gz and <span class="sc">\_</span>R2.fastq.gz changed to <span class="sc">\_</span>1.fastq.gz and <span class="sc">\_</span>2.fastq.gz. I haven't found a workaround to avoid the renaming. The datasets.tsv, technical replicates and biological doesn't really matter but if you want the end file to combine everything, add rep1, rep2 per pair of fastq files so the final resulting file will be denoted allReps. Do <span class="in">`runHiC quality`</span> to get a sense of how well the experiment worked after shallow sequencing.</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Downstream analysis</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>Many of these have many tools available to call them. I have attempted to choose the most well-supported tools in the same ecosystem to avoid unnecessary format changes and hidden mistakes. I ended up with the Open2C ecosystem's <span class="co">[</span><span class="ot">cooltools</span><span class="co">](https://cooltools.readthedocs.io/en/latest/)</span> and many of Dr. Feng Yue's lab's tools.</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### A/B Compartments</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>I'm following the cooltools <span class="co">[</span><span class="ot">compartments tutorial</span><span class="co">](https://cooltools.readthedocs.io/en/latest/notebooks/compartments_and_saddles.html)</span>.\</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>Compartments are not comparable between cell types if done using PCA. You can use <span class="co">[</span><span class="ot">cscore</span><span class="co">](https://github.com/scoutzxb/CscoreTool)</span> if a more robust definition is needed. However, the PCA definition is currently still widely used. For this, you need too calculate expected values first and you should output those as a tsv because you'll need it for other analysis.</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{bash}</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="ex">lucap_35cr_cis_eigs</span> = cooltools.eigs_cis<span class="er">(</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                        <span class="ex">lucap_35cr,</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>                        <span class="ex">gc_cov,</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>                        <span class="va">n_eigs</span><span class="op">=</span>3,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">)</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="ex">lucap_35cr_eigenvector_track</span> = lucap_35cr_cis_eigs<span class="pp">[</span><span class="ss">1</span><span class="pp">]</span>[<span class="pp">[</span><span class="st">'chrom'</span><span class="ss">,</span><span class="st">'start'</span><span class="ss">,</span><span class="st">'end'</span><span class="ss">,</span><span class="st">'E1'</span><span class="pp">]</span>]</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Topological Associating Domain</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>There are many TAD calling tools and most of them do not have a great degree of overlap. I chose the insulation score methods in <span class="co">[</span><span class="ot">cooltools</span><span class="co">](https://cooltools.readthedocs.io/en/latest/notebooks/insulation_and_boundaries.html)</span>.</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>Creating TADs from insulation scores <span class="ot">&lt;https://github.com/open2c/cooltools/issues/453&gt;</span>.</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{bash}</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="ex">windows</span> = [3<span class="pp">*</span>resolution, 5<span class="pp">*</span>resolution, 10<span class="pp">*</span>resolution, 25<span class="pp">*</span>resolution]</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="ex">samples</span> = {<span class="st">"LuCaP70CR"</span> : lucap70cr_insulation_table, </span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>           <span class="st">"LuCaP77CR"</span> : lucap77cr_insulation_table,</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>          <span class="st">"LuCaP1451"</span> : lucap1451_insulation_table}</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> window <span class="kw">in</span> windows:</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> table_name<span class="ex">,</span> table in samples.items<span class="er">(</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>        <span class="ex">print</span><span class="er">(</span><span class="st">"sample"</span><span class="ex">,</span> table_name, <span class="st">"at"</span>, window<span class="kw">)</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>        <span class="ex">insul</span> = table[[<span class="st">"chrom"</span>, <span class="st">"start"</span>, <span class="st">"end"</span>, f<span class="st">"log2_insulation_score_{window}"</span>]]</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>        <span class="ex">insul.to_csv</span><span class="er">(</span><span class="ex">f</span><span class="st">"results_{window}/{table_name}_insulation_scores_{window}.bed"</span><span class="ex">,</span> header=False, index=False, sep=<span class="st">"\t"</span><span class="kw">)</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>        <span class="ex">tads</span> = bioframe.merge<span class="er">(</span><span class="va">table</span><span class="op">[</span>table[f<span class="st">"is_boundary_{window}"</span><span class="op">]</span> <span class="ex">==</span> False]<span class="kw">)</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>        <span class="ex">tads</span> = tads[<span class="er">(</span><span class="va">tads</span><span class="op">[</span><span class="st">"end"</span><span class="op">]</span> <span class="ex">-</span> tads<span class="pp">[</span><span class="st">"start"</span><span class="pp">]</span><span class="kw">)</span> <span class="op">&lt;</span>= <span class="ex">1500000].reset_index</span><span class="er">(</span><span class="va">drop</span><span class="op">=</span>True<span class="kw">)</span> <span class="co"># dropping large tads</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>        <span class="ex">tads.to_csv</span><span class="er">(</span><span class="ex">f</span><span class="st">"results_{window}/{table_name}_TADs_{window}.bed"</span><span class="ex">,</span> header=False, index=False, sep=<span class="st">"\t"</span><span class="kw">)</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### Loops</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Mustache</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>Use mustache for loop calls of individual samples, and diffMustache for pair-wise comparisons. The default d for diffMustache is 2,000,000bp. Call at various cut-offs with <span class="in">`-pt2`</span> and decide on a reasonable number of loops.</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Working with loops</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>homer <span class="co">[</span><span class="ot">merge2Dbed.pl</span><span class="co">](http://homer.ucsd.edu/homer/interactions2/HiCTADsAndLoops.html)</span> will combine seperate loop calls (also TADs if specified in parameter) that are at adjacent pixels (or within distance specified) into a big loop. This will also produce condition specific loops that are just based on coordinates, not statistical difference.</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>Currently, I'm using <span class="co">[</span><span class="ot">LoopRig</span><span class="co">](https://cran.r-project.org/web/packages/LoopRig/index.html)</span> as the underlying data structure for working with bedpe files. It's really just 2 Granges objects linked together and I've re-written many of their functions. It's most likely unnecessary to use this package.</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### APA</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>There are also many implementations of APA calculation. I use <span class="co">[</span><span class="ot">coolpup.py</span><span class="co">](https://github.com/open2c/coolpuppy)</span>, an extension of <span class="in">`cooltools pileup`</span>.</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## HiGlass</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>You either start with a local installation of Docker, or use the online browser at resgen. They have some slight differences.\</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>For HiGlass, you need to ingest most files in a two-step manner, whereas with resgen you can directly upload them (with the exception of TADs). It's better to write scripts to facilitate and automate the ingestion.\</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>The files will not line up perfect with the heat maps due to how HiGlass interprets coordinates. See <span class="ot">&lt;https://github.com/higlass/higlass/issues/1051&gt;</span>. Since HiGlass doesn't have a notion of a genomic assembly, you need to ingest a chromosome size file once when you start.</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="fu">### Docker</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>Install docker following these <span class="co">[</span><span class="ot">instructions</span><span class="co">](https://github.com/higlass/higlass-docker)</span>.\</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>To view HiGlass on docker locally, start the docker app, run <span class="in">`higlass-manage start`</span> on your terminal. Go to <span class="ot">&lt;http://localhost:8989/app&gt;</span> to see the browser. Deletion of ingested tracks needs access to the superuser via <span class="ot">&lt;http://localhost:8989/admin/&gt;</span>. Once data is ingested, it's kept at a different location and you can usually delete the original files in your local computer to save space.</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="fu">### Resgen</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>You can create separate projects. Files uploaded needs to be manually tagged. Most important are <span class="in">`assembly:hg38`</span>, <span class="in">`datatype`</span>, and <span class="in">`filetype`</span>. To use gene search, both chromosome info and gene annotations need to be added to the panel using the search bar.</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### Navigating HiGlass</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>You need to be able to reproduce each view so you won't have to start from scatch each time. In Docker, you save the View Configs files manually. In resgen, you can save a view.</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>While the GUI is sufficient, some things are faster and easier changed via the view configs.\</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>To change 1D scales, <span class="ot">&lt;https://github.com/higlass/higlass/issues/946&gt;</span>.</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ingesting files specifications</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>Instructions can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://docs.higlass.io/)</span> but it's sparse and somewhat confusing so I'm including common use cases.</span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>After aggregation (whether that's needed depends on the filetype), ingest files like this with appropriate tags.</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{bash}</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a><span class="ex">higlass-manage</span> ingest file <span class="at">--filetype</span> bed2ddb <span class="at">--datatype</span> 2d-rectangle-domains <span class="at">--project-name</span> <span class="va">$3</span> <span class="at">--assembly</span> hg38</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="fu">#### mcool</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>The .mcool files themselves are easily recognized with just <span class="in">`higlass-manage ingest sample.mcool --assembly hg38`</span>.</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="fu">#### AB compartments</span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>These files need to be converted into bigwigs first. They are more well supported than bedgraph files. Use UCSC's bedGraphtoBigWig.</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="fu">#### TADs</span></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>For resgen, TADs need to be aggregated first, and the aggregated file is uploaded.</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{bash}</span></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a><span class="va">j</span><span class="op">=</span><span class="va">${1</span><span class="op">%%</span>.<span class="pp">*</span><span class="va">}</span></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="ex">clodius</span> aggregate bedpe <span class="dt">\</span></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>    <span class="at">--assembly</span> hg38 <span class="dt">\</span></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>    <span class="at">--chr1-col</span> 1 <span class="at">--chr2-col</span> 1 <span class="dt">\</span></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>    <span class="at">--from1-col</span> 2 <span class="at">--to1-col</span> 3 <span class="dt">\</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">--from2-col</span> 2 <span class="at">--to2-col</span> 3 <span class="dt">\</span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>    <span class="at">--output-file</span> <span class="va">${j}</span>.beddb <span class="dt">\</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>    <span class="va">$1</span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>Specify <span class="in">`track-type:linear-2d-rectangle-domains`</span> and <span class="in">`filetype:bed2ddb`</span> for top section. For viewing in center section <span class="in">`datatype:2d-rectangle-domains`</span>.</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Loops</span></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>Loops view as arcs currently only works on resgen and not the local docker. Loops on the 2D heatmap will work with docker.</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### ChIP-Seq and ATAC-Seq tracks</span></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>These are just bigwig ingestion.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>
